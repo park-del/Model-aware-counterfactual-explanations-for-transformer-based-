@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.idea/
+.vscode/
+.pytest_cache/
+outputs/
+checkpoints/
+
+# Keep only placeholders and documentation under data/
+data/**/*
+!data/**/.gitkeep
+!data/README.md

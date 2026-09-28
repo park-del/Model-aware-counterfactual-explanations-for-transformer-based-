@@ -1,0 +1,26 @@
+project:
+  seed: 42
+  output_dir: outputs
+
+data:
+  dataset: bpic2017
+  raw_dir: data
+  processed_dir: data/processed
+  train_ratio: 0.72
+  validation_ratio: 0.08
+  test_ratio: 0.20
+  max_sequence_length: 200
+
+model:
+  d_model: 128
+  num_heads: 8
+  num_layers: 3
+
+sage:
+  population_size: 1000
+  generations: 15
+  mutation_probability: 0.20
+  attention_threshold: 0.50
+  alpha: 0.50
+  beta: 0.50
+  gamma: 1.00
