@@ -35,4 +35,18 @@ python main.py --stage counterfactual --dataset sepsis
 python main.py --stage evaluate --dataset sepsis
 ```
 
+Run a baseline and evaluate it:
+
+```bash
+python main.py --stage baseline --dataset bpic2017 --method face
+python main.py --stage evaluate --dataset bpic2017 --method face
+```
+
+Run the paper's ablation or sensitivity grids (five seeds by default):
+
+```bash
+python experiments/run_sensitivity.py --dataset bpic2017 --study ablation
+python experiments/run_sensitivity.py --dataset bpic2017 --study population_size
+```
+
 The data manifest pins official downloads and SHA-256 checksums. The preprocessing pipeline, attention-exporting Transformer, SAGE evolutionary search, local surrogate rules, and metric aggregation are implemented. See [REPRODUCIBILITY.md](REPRODUCIBILITY.md) before comparing numbers with the paper: several label and field-mapping details are not specified in the article and are exposed as explicit assumptions here.

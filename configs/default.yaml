@@ -37,6 +37,10 @@ model:
   early_stopping_patience: 5
 
 sage:
+  initialization: semantic
+  mutation_strategy: attention
+  enforce_feasibility: true
+  fitness_mode: combined
   population_size: 1000
   generations: 10
   crossover_probability: 0.70
@@ -54,4 +58,5 @@ sage:
 experiment:
   explanation_prefix_length: 20
   explanation_limit: 100
+  baseline_limit: 100
   counterfactuals_per_instance: 5

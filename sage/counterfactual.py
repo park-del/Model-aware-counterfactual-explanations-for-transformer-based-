@@ -158,21 +158,23 @@ class SAGEExplainer:
 
         pool, pool_output = self._reference_at_length(prefix_length)
         population_size = int(self.config.get("population_size", 1000))
-        population, _ = initialize_population(
-            pool,
-            pool_output["static"],
-            pool_output["dynamic"],
-            original_output["static"][0],
-            original_output["dynamic"][0],
-            min(population_size, len(pool)),
-            float(self.config.get("dynamic_similarity_weight", 0.7)),
-        )
+        if self.config.get("initialization", "semantic") == "random":
+            population = [deepcopy(value) for value in self.rng.sample(pool, min(population_size, len(pool)))]
+        else:
+            population, _ = initialize_population(
+                pool,
+                pool_output["static"],
+                pool_output["dynamic"],
+                original_output["static"][0],
+                original_output["dynamic"][0],
+                min(population_size, len(pool)),
+                float(self.config.get("dynamic_similarity_weight", 0.7)),
+            )
         if not population:
             raise ValueError(f"no reference trace has prefix length {prefix_length}")
         while len(population) < population_size:
             population.append(deepcopy(self.rng.choice(population)))
 
-        final_details = None
         for _ in range(int(self.config.get("generations", 10))):
             output = self._model_outputs(population, return_attention=True)
             similarities = np.asarray(
@@ -190,11 +192,11 @@ class SAGEExplainer:
             fitness = np.asarray(
                 [
                     compute_fitness(
-                        probability[target_id],
+                        0.0 if self.config.get("fitness_mode") == "distance_only" else probability[target_id],
                         similarity,
                         self._same(candidate, original),
-                        float(self.config.get("alpha", 0.5)),
-                        float(self.config.get("beta", 0.5)),
+                        0.0 if self.config.get("fitness_mode") == "distance_only" else float(self.config.get("alpha", 0.5)),
+                        1.0 if self.config.get("fitness_mode") == "distance_only" else float(self.config.get("beta", 0.5)),
                         float(self.config.get("gamma", 1.0)),
                     )
                     for candidate, probability, similarity in zip(population, output["probabilities"], similarities)
@@ -211,19 +213,23 @@ class SAGEExplainer:
                 for child in (first, second):
                     if self.rng.random() < float(self.config.get("mutation_probability", 0.2)):
                         child_output = self._model_outputs([child], return_attention=True)
+                        attention_scores = child_output["attention"][0]
+                        if self.config.get("mutation_strategy", "attention") == "random":
+                            attention_scores = np.ones_like(attention_scores)
                         mutate(
                             child,
-                            child_output["attention"][0],
+                            attention_scores,
                             self.domains,
                             self.tokenizer,
                             self.rng,
                             float(self.config.get("temperature", 0.5)),
                         )
-                    next_population.append(self._repair(child))
+                    if self.config.get("enforce_feasibility", True):
+                        child = self._repair(child)
+                    next_population.append(child)
                     if len(next_population) >= population_size:
                         break
             population = next_population
-            final_details = (output, similarities, fitness)
 
         output = self._model_outputs(population)
         similarities = np.asarray(
@@ -241,8 +247,12 @@ class SAGEExplainer:
         fitness = np.asarray(
             [
                 compute_fitness(
-                    probability[target_id], similarity, self._same(candidate, original),
-                    float(self.config.get("alpha", 0.5)), float(self.config.get("beta", 0.5)), float(self.config.get("gamma", 1.0))
+                    0.0 if self.config.get("fitness_mode") == "distance_only" else probability[target_id],
+                    similarity,
+                    self._same(candidate, original),
+                    0.0 if self.config.get("fitness_mode") == "distance_only" else float(self.config.get("alpha", 0.5)),
+                    1.0 if self.config.get("fitness_mode") == "distance_only" else float(self.config.get("beta", 0.5)),
+                    float(self.config.get("gamma", 1.0))
                 )
                 for candidate, probability, similarity in zip(population, output["probabilities"], similarities)
             ]
@@ -284,6 +294,18 @@ class SAGEExplainer:
             )
             if len(selected) >= top_k:
                 break
+        neighborhood_features = np.asarray(
+            [self.tokenizer.encode(candidate, len(candidate.activities))["input_ids"] for candidate in population]
+        )
+        original_features = np.asarray(self.tokenizer.encode(original, len(original.activities))["input_ids"])
+        surrogate = extract_counterfactual_rules(
+            neighborhood_features,
+            predictions,
+            original_features,
+            target_id,
+            int(self.config.get("surrogate_max_depth", 5)),
+            int(self.config.get("seed", 42)),
+        )
         return {
             "original": asdict(original),
             "original_prediction": self.tokenizer.id_to_label[original_class],

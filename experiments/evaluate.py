@@ -15,14 +15,14 @@ from utils.metrics import evaluate_counterfactuals
 from preprocessing.common import read_jsonl
 
 
-def run(config, dataset):
+def run(config, dataset, method=None):
     output = ROOT / config["project"]["output_dir"] / dataset
-    source = output / "counterfactuals.jsonl"
+    source = output / (f"counterfactuals_{method}.jsonl" if method else "counterfactuals.jsonl")
     with source.open(encoding="utf-8") as handle:
         results = [json.loads(line) for line in handle]
     reference_cases = read_jsonl(ROOT / config["data"]["processed_dir"] / dataset / "train.jsonl")
     metrics = evaluate_counterfactuals(results, reference_cases)
-    destination = output / "counterfactual_metrics.json"
+    destination = output / (f"counterfactual_metrics_{method}.json" if method else "counterfactual_metrics.json")
     destination.write_text(json.dumps(metrics, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(metrics, indent=2))
     return metrics
@@ -32,8 +32,9 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", default="configs/default.yaml")
     parser.add_argument("--dataset", required=True, choices=("bpic2017", "bpic2012", "helpdesk", "sepsis"))
+    parser.add_argument("--method", choices=("dice", "face", "growing_spheres", "loreley"))
     args = parser.parse_args()
-    run(load_config(ROOT / args.config), args.dataset)
+    run(load_config(ROOT / args.config), args.dataset, args.method)
     return 0
 
 

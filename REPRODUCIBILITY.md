@@ -36,5 +36,6 @@ python main.py --stage evaluate --dataset sepsis
 
 Repeat the last four commands for `helpdesk`, `bpic2012`, and `bpic2017`.
 
-The paper used Python 3.10, PyTorch 2.1.2, CUDA 12.1, Ubuntu 22.04, and one RTX 4090 GPU.
+Baseline, ablation, and sensitivity commands are documented in `README.md`. Baseline modules are transparent Table-7-compatible reimplementations because the article does not publish the authors' exact baseline source tree.
 
+The paper used Python 3.10, PyTorch 2.1.2, CUDA 12.1, Ubuntu 22.04, and one RTX 4090 GPU.
