@@ -1,0 +1,38 @@
+{
+  "bpic2017": {
+    "filename": "BPI Challenge 2017.xes.gz",
+    "relative_path": "data/raw/bpic2017/BPI Challenge 2017.xes.gz",
+    "url": "https://data.4tu.nl/file/34c3f44b-3101-4ea9-8281-e38905c68b8d/f3aec4f7-d52c-4217-82f4-57d719a8298c",
+    "doi": "10.4121/uuid:5f3067df-f10b-45da-b98b-86ae4c7a310b",
+    "sha256": "183c5e5189282779c811c78c33ff936351b3dd201165d612211fc220936f8249",
+    "size_bytes": 29658747,
+    "expected_cases": 31509
+  },
+  "bpic2012": {
+    "filename": "BPI Challenge 2012.xes.gz",
+    "relative_path": "data/raw/bpic2012/BPI Challenge 2012.xes.gz",
+    "url": "https://data.4tu.nl/file/533f66a4-8911-4ac7-8612-1235d65d1f37/3276db7f-8bee-4f2b-88ee-92dbffb5a893",
+    "doi": "10.4121/uuid:3926db30-f712-4394-aebc-75976070e91f",
+    "sha256": "5cd9cc16b9bcb20bd4aae45666a5d87479ddbf47e6371618b6ad217174cecdf3",
+    "size_bytes": 3342406,
+    "expected_cases": 13087
+  },
+  "helpdesk": {
+    "filename": "finale.csv",
+    "relative_path": "data/raw/helpdesk/finale.csv",
+    "url": "https://data.4tu.nl/file/94ee26c8-78f6-4387-b32b-f028f2103a2c/697ff9af-fca0-4363-bd84-e81735d27e9f",
+    "doi": "10.4121/uuid:0c60edf1-6f83-4e75-9367-4c63b3e9d5bb",
+    "sha256": "31024fa6da0a35578643d50f2bea6e90d5ce97628b64851e271b521f005eef1c",
+    "size_bytes": 3271588,
+    "expected_cases": 4580
+  },
+  "sepsis": {
+    "filename": "Sepsis Cases - Event Log.xes.gz",
+    "relative_path": "data/raw/sepsis/Sepsis Cases - Event Log.xes.gz",
+    "url": "https://data.4tu.nl/file/33632f3c-5c48-40cf-8d8f-2db57f5a6ce7/643dccf2-985a-459e-835c-a82bce1c0339",
+    "doi": "10.4121/uuid:915d2bfb-7e84-49ad-a286-dc35f063a460",
+    "sha256": "709c52340306415952811b9b9c5dc6bcc8f8d47d583eba39df9a538459dc543a",
+    "size_bytes": 202508,
+    "expected_cases": 1050
+  }
+}

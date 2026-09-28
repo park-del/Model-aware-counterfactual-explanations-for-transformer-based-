@@ -3,24 +3,55 @@ project:
   output_dir: outputs
 
 data:
-  dataset: bpic2017
-  raw_dir: data
   processed_dir: data/processed
-  train_ratio: 0.72
-  validation_ratio: 0.08
-  test_ratio: 0.20
+  split_ratios: [0.72, 0.08, 0.20]
+  minimum_prefix_length: 1
+  prefix_step: 1
   max_sequence_length: 200
+
+datasets:
+  bpic2017:
+    raw_path: data/raw/bpic2017/BPI Challenge 2017.xes.gz
+    split_counts: [22713, 2513, 6283]
+  bpic2012:
+    raw_path: data/raw/bpic2012/BPI Challenge 2012.xes.gz
+    split_counts: [9423, 1047, 2617]
+  helpdesk:
+    raw_path: data/raw/helpdesk/finale.csv
+    split_counts: [3298, 366, 916]
+    timely_threshold_hours: null
+  sepsis:
+    raw_path: data/raw/sepsis/Sepsis Cases - Event Log.xes.gz
+    split_counts: [756, 84, 210]
 
 model:
   d_model: 128
   num_heads: 8
   num_layers: 3
+  feedforward_dim: 512
+  dropout: 0.10
+  batch_size: 128
+  learning_rate: 0.0001
+  weight_decay: 0.0
+  max_epochs: 50
+  early_stopping_patience: 5
 
 sage:
   population_size: 1000
-  generations: 15
+  generations: 10
+  crossover_probability: 0.70
   mutation_probability: 0.20
-  attention_threshold: 0.50
+  elitism_rate: 0.05
+  tournament_size: 3
+  temperature: 0.50
+  dynamic_similarity_weight: 0.70
+  static_similarity_weight: 0.30
   alpha: 0.50
   beta: 0.50
   gamma: 1.00
+  surrogate_max_depth: 5
+
+experiment:
+  explanation_prefix_length: 20
+  explanation_limit: 100
+  counterfactuals_per_instance: 5

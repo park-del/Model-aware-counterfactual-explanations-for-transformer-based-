@@ -9,7 +9,12 @@ venv/
 outputs/
 checkpoints/
 
-# Keep only placeholders and documentation under data/
-data/**/*
+# Raw and generated data are reproducible from data/manifest.json.
+data/raw/
+data/processed/
+data/**/*.pt
+data/**/*.npz
+data/**/*.jsonl
 !data/**/.gitkeep
 !data/README.md
+!data/manifest.json

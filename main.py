@@ -1,8 +1,8 @@
-"""Command-line entry point for the reproduction project."""
+"""Command-line entry point for the SAGE reproduction project."""
 
 import argparse
-
-from utils.config import load_config
+import subprocess
+import sys
 
 
 def parse_args():
@@ -14,18 +14,26 @@ def parse_args():
     )
     parser.add_argument(
         "--stage",
-        choices=("preprocess", "train", "counterfactual", "evaluate"),
+        choices=("download", "preprocess", "train", "counterfactual", "evaluate"),
         required=True,
         help="Pipeline stage to run",
     )
+    parser.add_argument("--dataset", choices=("bpic2017", "bpic2012", "helpdesk", "sepsis"))
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
-    config = load_config(args.config)
-    print(f"Stage '{args.stage}' selected for dataset '{config['data']['dataset']}'.")
-    print("The repository structure is ready; implementation will proceed module by module.")
+    if args.stage != "download" and not args.dataset:
+        raise SystemExit("--dataset is required for this stage")
+    commands = {
+        "download": [sys.executable, "scripts/download_datasets.py"],
+        "preprocess": [sys.executable, "scripts/preprocess.py", "--config", args.config, "--dataset", args.dataset],
+        "train": [sys.executable, "experiments/train_predictor.py", "--config", args.config, "--dataset", args.dataset],
+        "counterfactual": [sys.executable, "experiments/generate_counterfactuals.py", "--config", args.config, "--dataset", args.dataset],
+        "evaluate": [sys.executable, "experiments/evaluate.py", "--config", args.config, "--dataset", args.dataset],
+    }
+    subprocess.run(commands[args.stage], check=True)
 
 
 if __name__ == "__main__":

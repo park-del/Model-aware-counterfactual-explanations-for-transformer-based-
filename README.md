@@ -24,12 +24,15 @@ Download instructions are in [data/README.md](data/README.md). Raw datasets, che
 - `configs/`: experiment configuration files
 - `data/`: local raw and processed datasets
 
-## Current status
+## Quick start
 
-The repository skeleton is ready. Implement the pipeline in this order:
+```bash
+pip install -r requirements.txt
+python main.py --stage download
+python main.py --stage preprocess --dataset sepsis
+python main.py --stage train --dataset sepsis
+python main.py --stage counterfactual --dataset sepsis
+python main.py --stage evaluate --dataset sepsis
+```
 
-1. Dataset preprocessing
-2. Transformer predictor
-3. SAGE counterfactual generator
-4. Baselines and evaluation
-5. Ablation and sensitivity experiments
+The data manifest pins official downloads and SHA-256 checksums. The preprocessing pipeline, attention-exporting Transformer, SAGE evolutionary search, local surrogate rules, and metric aggregation are implemented. See [REPRODUCIBILITY.md](REPRODUCIBILITY.md) before comparing numbers with the paper: several label and field-mapping details are not specified in the article and are exposed as explicit assumptions here.
